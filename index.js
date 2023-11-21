@@ -1,58 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Form</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-    <div class="flex items-center justify-center h-screen">
-        <div class="container mx-auto my-10 p-10 bg-white shadow-lg rounded-lg">
-        <h2 class="text-2xl font-bold mb-5">Registration Form</h2>
-        <form id="registrationForm">
-            <div class="mb-5">
-                <label for="name" class="block mb-1">Full Name</label>
-                <input type="text" id="name" name="name" required class="w-full p-2 border border-gray-300 rounded">
-            </div>
-            <div class="mb-5">
-                <label for="email" class="block mb-1">Email</label>
-                <input type="email" id="email" name="email" required class="w-full p-2 border border-gray-300 rounded">
-            </div>
-            <div class="mb-5">
-                <label for="password" class="block mb-1">Password</label>
-                <input type="password" id="password" name="password" required class="w-full p-2 border border-gray-300 rounded">
-            </div>
-            <div class="mb-5">
-                <label for="dob" class="block mb-1">Date of Birth</label>
-                <input type="date" id="dob" name="dob" required class="w-full p-2 border border-gray-300 rounded">
-            </div>
-            <div class="mb-5">
-                <input type="checkbox" id="acceptedTerms" name="acceptedTerms" required>
-                <label for="acceptedTerms" class="ml-2">Accept Terms & Conditions</label>
-            </div>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Submit
-            </button>
-        </form>
-    </div>
-    </div>
 
-    <div class="container mx-auto my-10 p-10 bg-white shadow-lg rounded-lg">
-        <h2 class="text-2xl font-bold mb-5 mt-10">Registered Users</h2>
-        <table class="w-full border border-gray-300">
-            <thead>
-                <tr>
-                    <th class="border border-gray-300 p-2">Name</th>
-                    <th class="border border-gray-300 p-2">Email</th>
-                    <th class="border border-gray-300 p-2">Password</th>
-                    <th class="border border-gray-300 p-2">Dob</th>
-                    <th class="border border-gray-300 p-2">Accepted terms?</th>
-                </tr>
-            </thead>
-            <tbody id="userTableBody"></tbody>
-        </table>
-    </div>
-    <script src="./index.js"></script>
-</body>
-</html>
+document.addEventListener('DOMContentLoaded', () => {
+    const userTableBody = document.getElementById('userTableBody');
+
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('user_')) {
+            const userData = JSON.parse(localStorage.getItem(key));
+            addRowToTable(userTableBody, userData);
+        }
+    }
+});
+
+const form = document.getElementById('registrationForm');
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const dob = new Date(form.dob.value);
+    const currentYear = new Date().getFullYear();
+    const age = currentYear - dob.getFullYear();
+
+    // Validate age to accept users between 18 and 55 years old
+    if (age < 18 || age > 55) {
+        alert('Age should be between 18 and 55.');
+        return;
+    }
+
+    const userKey = 'user_' + Date.now();
+    localStorage.setItem(userKey, JSON.stringify({
+        name: form.name.value,
+        email: form.email.value,
+        password: form.password.value,
+        dob: form.dob.value,
+        acceptedTerms: form.acceptedTerms.checked
+    }));
+
+    const userTableBody = document.getElementById('userTableBody');
+    addRowToTable(userTableBody, {
+        name: form.name.value,
+        email: form.email.value,
+        password: form.password.value,
+        dob: form.dob.value,
+        acceptedTerms: form.acceptedTerms.checked
+    });
+});
+
+function addRowToTable(tableBody, userData) {
+    const newRow = tableBody.insertRow();
+    
+    // Add borders and padding to each cell
+    const cellStyle = 'border border-gray-300 p-2';
+
+    const nameCell = newRow.insertCell();
+    nameCell.textContent = userData.name;
+    nameCell.className = cellStyle;
+
+    const emailCell = newRow.insertCell();
+    emailCell.textContent = userData.email;
+    emailCell.className = cellStyle;
+
+    const passwordCell = newRow.insertCell();
+    passwordCell.textContent = userData.password;
+    passwordCell.className = cellStyle;
+
+    const dobCell = newRow.insertCell();
+    dobCell.textContent = userData.dob;
+    dobCell.className = cellStyle;
+
+    const acceptedTermsCell = newRow.insertCell();
+    acceptedTermsCell.textContent = userData.acceptedTerms;
+    acceptedTermsCell.className = cellStyle;
+        }
