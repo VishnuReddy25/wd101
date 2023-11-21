@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   let usersDetails = localStorage.getItem("users");
   let users;
-
+  
   if (usersDetails) {
     let storedData = JSON.parse(usersDetails);
     users = { ...storedData };
