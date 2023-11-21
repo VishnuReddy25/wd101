@@ -1,119 +1,58 @@
-document.addEventListener("DOMContentLoaded", function () {
-  let usersDetails = localStorage.getItem("users");
-  let users;
-  let tableBody = document.getElementById("tableBody");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="flex items-center justify-center h-screen">
+        <div class="container mx-auto my-10 p-10 bg-white shadow-lg rounded-lg">
+        <h2 class="text-2xl font-bold mb-5">Registration Form</h2>
+        <form id="registrationForm">
+            <div class="mb-5">
+                <label for="name" class="block mb-1">Full Name</label>
+                <input type="text" id="name" name="name" required class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <div class="mb-5">
+                <label for="email" class="block mb-1">Email</label>
+                <input type="email" id="email" name="email" required class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <div class="mb-5">
+                <label for="password" class="block mb-1">Password</label>
+                <input type="password" id="password" name="password" required class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <div class="mb-5">
+                <label for="dob" class="block mb-1">Date of Birth</label>
+                <input type="date" id="dob" name="dob" required class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <div class="mb-5">
+                <input type="checkbox" id="acceptedTerms" name="acceptedTerms" required>
+                <label for="acceptedTerms" class="ml-2">Accept Terms & Conditions</label>
+            </div>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Submit
+            </button>
+        </form>
+    </div>
+    </div>
 
-  if (usersDetails) {
-    let storedData = JSON.parse(usersDetails);
-    users = { ...storedData };
-    let usersCount = users.count;
-
-    for (let userKey in users) {
-      if (userKey !== "count") {
-        let user = users[userKey];
-        tableBody.innerHTML += `<tr>
-          <td>${user.name}</td>
-          <td>${user.email}</td>
-          <td>${user.password}</td>
-          <td>${user.dob}</td>
-          <td>${user.terms}</td>
-        </tr>`;
-      }
-    }
-  } else {
-    users = { count: 0 };
-  }
-
-  function showError(message) {
-    let errorContainer = document.querySelector(".error-msg");
-    errorContainer.textContent = "";
-    errorContainer.textContent = message;
-  }
-
-  let form = document.getElementById("regform");
-  let nameElement = document.getElementById("name");
-  let emailElement = document.getElementById("email");
-  let passwordElement = document.getElementById("password");
-  let dobElement = document.getElementById("dob");
-  let checkBoxElement = document.getElementById("agree");
-
-  function isNameEmpty(name) {
-    return name === "";
-  }
-
-  function isEmailEmpty(email) {
-    return email === "";
-  }
-
-  function isPasswordEmpty(password) {
-    return password === "";
-  }
-
-  function isAgeEmpty(age) {
-    return age === "";
-  }
-
-  function isInvalidAge(age) {
-    let currentDate = new Date();
-    let userDob = new Date(age);
-    let userAge = currentDate.getFullYear() - userDob.getFullYear();
-    return userAge < 18 || userAge > 55;
-  }
-
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    let userName = nameElement.value;
-    let userEmail = emailElement.value;
-    let userPassword = passwordElement.value;
-    let userDob = dobElement.value;
-    let acceptedTerms = checkBoxElement.checked;
-
-    if (isNameEmpty(userName)) {
-      showError("Name Cannot Be Empty, Please Fill That field");
-      return;
-    }
-    if (isEmailEmpty(userEmail)) {
-      showError("Email is Required, Please Fill That Field");
-      return;
-    }
-    if (isPasswordEmpty(userPassword)) {
-      showError("Please Fill The Password");
-      return;
-    }
-    if (isAgeEmpty(userDob)) {
-      showError("Date of Birth is Required");
-      return;
-    }
-    if (isInvalidAge(userDob)) {
-      showError("Your Age Should be Between 18 and 55");
-      return;
-    }
-
-    showError("");
-    users.count++;
-
-    let userKeyName = "user" + users.count;
-    let user = {
-      name: userName,
-      email: userEmail,
-      password: userPassword,
-      dob: userDob,
-      terms: acceptedTerms,
-    };
-    users[userKeyName] = { ...user };
-    localStorage.setItem("users", JSON.stringify(users));
-
-    // Update the table after a new user is added
-    tableBody.innerHTML += `<tr>
-      <td>${user.name}</td>
-      <td>${user.email}</td>
-      <td>${user.password}</td>
-      <td>${user.dob}</td>
-      <td>${user.terms}</td>
-    </tr>`;
-
-    // Clear the form fields after submission
-    form.reset();
-  });
-});
+    <div class="container mx-auto my-10 p-10 bg-white shadow-lg rounded-lg">
+        <h2 class="text-2xl font-bold mb-5 mt-10">Registered Users</h2>
+        <table class="w-full border border-gray-300">
+            <thead>
+                <tr>
+                    <th class="border border-gray-300 p-2">Name</th>
+                    <th class="border border-gray-300 p-2">Email</th>
+                    <th class="border border-gray-300 p-2">Password</th>
+                    <th class="border border-gray-300 p-2">Dob</th>
+                    <th class="border border-gray-300 p-2">Accepted terms?</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody"></tbody>
+        </table>
+    </div>
+    <script src="./index.js"></script>
+</body>
+</html>
