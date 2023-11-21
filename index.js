@@ -1,63 +1,63 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // console.log("document loaded");
   let usersDetails = localStorage.getItem("users");
-  let users;
-  
+
+  // console.log(usersDetails);
   if (usersDetails) {
+    // console.log("in if ");
     let storedData = JSON.parse(usersDetails);
-    users = { ...storedData };
-    let usersCount = users.count;
-
-    let tableBody = document.getElementById("tableBody");
-
-    for (let userKey in users) {
-      if (userKey !== "count") {
-        let user = users[userKey];
-        tableBody.innerHTML += `<tr>
-          <td>${user.name}</td>
-          <td>${user.email}</td>
-          <td>${user.password}</td>
-          <td>${user.dob}</td>
-          <td>${user.terms ? "true" : "false"}</td>
-        </tr>`;
-      }
-    }
+    // console.log(storedData);
+    users = [...storedData];
+    // console.log(users);
+    let htmlContent = ``;
+    users.forEach(function (userDetails) {
+      htmlContent += `<tr>
+      <td>${userDetails.name}</td>
+      <td>${userDetails.email}</td>
+      <td>${userDetails.password}</td>
+      <td>${userDetails.dob}</td>
+      <td>${userDetails.terms}</td>
+    </tr>`;
+    });
+    tableBody.innerHTML = htmlContent;
   } else {
-    users = { count: 0 };
+    return;
   }
 });
 
 function showError(message) {
-  let errorContainer = document.querySelector(".error-msg");
   errorContainer.textContent = "";
   errorContainer.textContent = message;
 }
 
-let users = {};
-let tableBody = document.getElementById("tableBody");
-
-let form = document.getElementById("regform");
+// global variable
+let users = [];
+//  targeting elements
+let errorContainer = document.querySelector(".error-msg");
+let form = document.getElementById("formData");
 let nameElement = document.getElementById("name");
 let emailElement = document.getElementById("email");
 let passwordElement = document.getElementById("password");
 let dobElement = document.getElementById("dob");
 let checkBoxElement = document.getElementById("agree");
+let tableBody = document.getElementById("tableBody");
+let btn = document.getElementById("submit");
+
+//validation functions
 
 function isNameEmpty(name) {
   return name === "";
 }
-
 function isEmailEmpty(email) {
   return email === "";
 }
 
 function isPasswordEmpty(password) {
-  return password === "";
+  return password == "";
 }
-
 function isAgeEmpty(age) {
-  return age === "";
+  return age == "";
 }
-
 function isInvalidAge(age) {
   let currentDate = new Date();
   let userDob = new Date(age);
@@ -65,7 +65,11 @@ function isInvalidAge(age) {
   return userAge < 18 || userAge > 55;
 }
 
+//responding to submit event
+
 form.addEventListener("submit", function (event) {
+  console.log("Form submission started");
+
   event.preventDefault();
 
   let userName = nameElement.value;
@@ -73,6 +77,8 @@ form.addEventListener("submit", function (event) {
   let userPassword = passwordElement.value;
   let userDob = dobElement.value;
   let acceptedTerms = checkBoxElement.checked;
+
+  console.log("Form data captured");
 
   if (isNameEmpty(userName)) {
     showError("Name Cannot Be Empty, Please Fill That field");
@@ -94,11 +100,9 @@ form.addEventListener("submit", function (event) {
     showError("Your Age Should be Between 18 and 55");
     return;
   }
-
+  // console.log("validations completed");
   showError("");
-  users.count++;
 
-  let userKeyName = "user" + users.count;
   let user = {
     name: userName,
     email: userEmail,
@@ -106,17 +110,8 @@ form.addEventListener("submit", function (event) {
     dob: userDob,
     terms: acceptedTerms,
   };
-  users[userKeyName] = { ...user };
+  users.push(user);
   localStorage.setItem("users", JSON.stringify(users));
 
-  tableBody.innerHTML += `<tr>
-    <td>${user.name}</td>
-    <td>${user.email}</td>
-    <td>${user.password}</td>
-    <td>${user.dob}</td>
-    <td>${user.terms ? "Yes" : "No"}</td>
-  </tr>`;
-
-  // Clear the form fields after submission
-  form.reset();
+  location.reload();
 });
