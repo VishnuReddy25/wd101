@@ -114,7 +114,7 @@ form.addEventListener("submit", function (event) {
     <td>${user.email}</td>
     <td>${user.password}</td>
     <td>${user.dob}</td>
-    <td>${user.terms ? "Yes" : "No"}</td>
+    <td>${user.terms ? "true" : "false"}</td>
   </tr>`;
 
   // Clear the form fields after submission
